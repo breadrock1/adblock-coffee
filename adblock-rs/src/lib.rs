@@ -9,16 +9,22 @@ use jni::JNIEnv;
 
 use crate::wrapper::*;
 
+const RUST_EXCEPTION_CLASS: &str = "com/example/adblock/exception/RustException";
+
 #[no_mangle]
 pub extern "system" fn Java_com_example_adblock_AdvtBlocker_initObject(
     mut env: JNIEnv,
     _class: JObject,
     rules: JObjectArray,
 ) -> jlong {
-    init_object_wrapped(&mut env, &rules).unwrap_or_else(|err| {
-        log::error!("{:?}", err);
-        -1_i64 as jlong
-    })
+    match init_object_wrapped(&mut env, &rules) {
+        Ok(ptr) => ptr,
+        Err(err) => {
+            env.throw_new(RUST_EXCEPTION_CLASS, err.to_string())
+                .expect("failed to find RustException java class");
+            -1_i64 as jlong
+        }
+    }
 }
 
 #[no_mangle]
@@ -27,10 +33,14 @@ pub extern "system" fn Java_com_example_adblock_AdvtBlocker_destroyObject(
     _class: JObject,
     ptr: jlong,
 ) -> jboolean {
-    destroy_object_wrapped(&mut env, ptr).unwrap_or_else(|err| {
-        log::error!("{:?}", err);
-        false as jboolean
-    })
+    match destroy_object_wrapped(&mut env, ptr) {
+        Ok(status) => status,
+        Err(err) => {
+            env.throw_new(RUST_EXCEPTION_CLASS, err.to_string())
+                .expect("failed to find RustException java class");
+            false as jboolean
+        }
+    }
 }
 
 #[no_mangle]
@@ -42,8 +52,12 @@ pub extern "system" fn Java_com_example_adblock_AdvtBlocker_checkNetworkUrls(
     src_url: JString,
     req_type: JString,
 ) -> jboolean {
-    check_net_urls_wrapped(&mut env, ptr, &url, &src_url, &req_type).unwrap_or_else(|err| {
-        log::error!("{:?}", err);
-        false as jboolean
-    })
+    match check_net_urls_wrapped(&mut env, ptr, &url, &src_url, &req_type) {
+        Ok(result) => result,
+        Err(err) => {
+            env.throw_new(RUST_EXCEPTION_CLASS, err.to_string())
+                .expect("failed to find RustException java class");
+            false as jboolean
+        }
+    }
 }

@@ -55,8 +55,10 @@ public class AdvtBlocker {
 
     /**
      * This method drops initialized native library object from memory.
+     *
+     * @throws RustException runtime exception of destroying rust AdvtBlocker object.
      */
-    public void destroyInstance() {
+    public void destroyInstance() throws RustException {
         if (!destroyObject(this.advtBlockerPtr)) {
             throw new RustException("Failed to destroy AdvtBlocker native library object!");
         }
@@ -76,6 +78,15 @@ public class AdvtBlocker {
     }
 
     /**
+     * This getter method returns current instance address of rust AdvtBlocker object.
+     *
+     * @return long type address of rust AdvtBlocker object.
+     */
+    protected long getInstanceAddress() {
+        return this.advtBlockerPtr;
+    }
+
+    /**
      * There is static native method which defined to get access to external library. Current method
      * initialize external library AdvtBlocker structure with passed rules list and returns pointer
      * to initialized object.
@@ -83,14 +94,15 @@ public class AdvtBlocker {
      * @param rules          A list of rules to further URL validation.
      * @throws RustException runtime exception from external library.
      */
-    public static native long initObject(List<String> rules);
+    public static native long initObject(List<String> rules) throws RustException;
 
     /**
      * There is static native method which drops initialized native library object.
      *
      * @param ptr A pointer to external library AdvtBlocker structure to drop.
+     * @return boolean status to destroying rust AdvtBlocker object.
      */
-    public static native boolean destroyObject(long ptr);
+    private static native boolean destroyObject(long ptr) throws RustException;
 
     /**
      * There is native method which defined to get access to external library. Current method
@@ -103,5 +115,5 @@ public class AdvtBlocker {
      * @return boolean       A result to validation
      * @throws RustException runtime exception from external library.
      */
-    public native boolean checkNetworkUrls(long ptr, String url, String sourceUrl, String requestType);
+    public native boolean checkNetworkUrls(long ptr, String url, String sourceUrl, String requestType) throws RustException;
 }

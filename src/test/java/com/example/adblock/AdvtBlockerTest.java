@@ -11,6 +11,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 
+import com.example.adblock.exception.RustException;
+
 public class AdvtBlockerTest {
 
     private List<String> rules = new ArrayList<>(List.of(
@@ -80,7 +82,7 @@ public class AdvtBlockerTest {
     }
 
     @Test
-    public void checkFromEaseRulesFiles() {
+    public void checkFromEaseRulesFilesTest() {
         try {
             ClassLoader classLoader = LoadLibraryHelper.class.getClassLoader();
             URL easyResource = classLoader.getResource("easylist.txt");
@@ -103,5 +105,41 @@ public class AdvtBlockerTest {
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
         }
+    }
+
+    @Test
+    public void checkMultipleInstancesTest() {
+        AdvtBlocker advtBlocker1 = AdvtBlocker.createInstance(rules);
+        AdvtBlocker advtBlocker2 = AdvtBlocker.createInstance(rules);
+
+        assertTrue(advtBlocker1.getInstanceAddress() != advtBlocker2.getInstanceAddress());
+
+        boolean result = advtBlocker1.checkUrls(
+            "http://example.com/-advertisement-icon.",
+            "http://example.com/helloworld",
+            "image"
+        );
+        assertTrue(result);
+
+        boolean result2 = advtBlocker2.checkUrls(
+            "http://example.com/-advertisement-icon.",
+            "http://example.com/helloworld",
+            "image"
+        );
+        assertTrue(result);
+
+        advtBlocker1.destroyInstance();
+        advtBlocker2.destroyInstance();
+    }
+
+    @Test(expected = RustException.class)
+    public void caughtRustExceptionTest() {
+        AdvtBlocker advtBlocker = AdvtBlocker.createInstance(rules);
+        advtBlocker.destroyInstance();
+        advtBlocker.checkUrls(
+            "http://example.com/-advertisement-icon.",
+            "http://example.com/helloworld",
+            "image"
+        );
     }
 }

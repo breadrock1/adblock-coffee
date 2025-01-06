@@ -13,17 +13,29 @@ lazy_static! {
 
         #[cfg(target_os = "android")]
         init.call_once(|| {
+            #[cfg(not(debug_assertions))]
+            let level_filter = LevelFilter::Info;
+
+            #[cfg(debug_assertions)]
+            let level_filter = LevelFilter::Debug;
+
             android_logger::init_once(
                 Config::default()
                     .with_tag("Tag_RustAdvtBlocker")
-                    .with_max_level(LevelFilter::max()),
+                    .with_max_level(level_filter),
             );
         });
 
         #[cfg(not(target_os = "android"))]
         init.call_once(|| {
+            #[cfg(not(debug_assertions))]
+            let level_filter = LevelFilter::Info;
+
+            #[cfg(debug_assertions)]
+            let level_filter = LevelFilter::Debug;
+
             let mut builder = Builder::new();
-            builder.filter_level(LevelFilter::Debug);
+            builder.filter_level(level_filter);
             builder.init();
         });
 
