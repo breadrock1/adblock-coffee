@@ -2,7 +2,7 @@ use adblock::lists::ParseOptions;
 use adblock::request::Request;
 use adblock::{Engine, FilterSet};
 
-use crate::errors::RustException;
+use crate::errors::Result;
 
 pub(crate) struct AdvtBlocker {
     engine: Engine,
@@ -10,7 +10,12 @@ pub(crate) struct AdvtBlocker {
 
 impl AdvtBlocker {
     pub fn new(filter_list: Vec<String>) -> Self {
+        #[cfg(not(debug_assertions))]
+        let debug_info = false;
+
+        #[cfg(debug_assertions)]
         let debug_info = true;
+
         let mut filter_set = FilterSet::new(debug_info);
         filter_set.add_filters(&filter_list, ParseOptions::default());
 
@@ -21,24 +26,8 @@ impl AdvtBlocker {
         }
     }
 
-    pub fn recreate(&mut self, filter_list: Vec<String>) {
-        let debug_info = true;
-        let mut filter_set = FilterSet::new(debug_info);
-        filter_set.add_filters(&filter_list, ParseOptions::default());
-
-        let filter_engine = Engine::from_filter_set(filter_set, true);
-        self.engine = filter_engine;
-    }
-
-    pub fn check_network_urls(
-        &self,
-        url: &str,
-        src_url: &str,
-        req_type: &str,
-    ) -> Result<bool, RustException> {
-        let request = Request::new(url, src_url, req_type)
-            .map_err(|err| RustException::CreateRequest(err.to_string()))?;
-
+    pub fn check_network_urls(&self, url: &str, src_url: &str, req_type: &str) -> Result<bool> {
+        let request = Request::new(url, src_url, req_type)?;
         let blocker_result = self.engine.check_network_request(&request);
         Ok(blocker_result.matched)
     }
