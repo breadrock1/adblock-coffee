@@ -1,4 +1,4 @@
-# Adblock-coffee
+# adblock-coffee
 [![Create release](https://github.com/breadrock1/Adblock-coffee/actions/workflows/release.yml/badge.svg)](https://github.com/breadrock1/Adblock-coffee/actions/workflows/release.yml)
 [![Pipelines](https://img.shields.io/github/actions/workflow/status/breadrock1/Adblock-coffee/build.yml)](https://img.shields.io/github/actions/workflow/status/breadrock1/Adblock-coffee/build.yml)
 [![Last release: ](https://img.shields.io/github/v/release/breadrock1/Adblock-coffee)](https://img.shields.io/github/v/release/breadrock1/Adblock-coffee)
