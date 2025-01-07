@@ -3,7 +3,7 @@
 [![Pipelines](https://img.shields.io/github/actions/workflow/status/breadrock1/adblock-coffee/build.yml?branch=master)](https://img.shields.io/github/actions/workflow/status/breadrock1/adblock-coffee/build.yml?branch=master)
 [![Last release: ](https://img.shields.io/github/v/release/breadrock1/adblock-coffee?display_name=release)](https://img.shields.io/github/v/release/breadrock1/adblock-coffee?display_name=release)
 
-This project is a simplest Java wrapper for the `adblock-rust` library, allowing you to use the powerful ad-blocking capabilities of `adblock-rust` in your Java applications.
+This project is the simplest Java wrapper for the `adblock-rust` library, allowing you to use the powerful ad-blocking capabilities of `adblock-rust` in your Java applications.
 
 ## Table of Contents
 
@@ -40,7 +40,7 @@ cargo build --release --manifest-path adblock-rs/Cargo.toml
 mvn install
 ```
 
-To build it for android platforms just use ndk (see installation on official site):
+To build it for Android platforms, just use NDK (see installation on official site):
 ```shell
  cargo ndk -t aarch64-linux-android -o ./target build --release
  mv arm64-v8 release 
@@ -52,15 +52,15 @@ mvn install
 ```
 
 If you want to build library to another platform add option `--target` with needed platform like `aarch64-unknown-linux-gnu`, .
-After that check that path of built library exists into `pom.xml` `maven-resources-plugin` section. As default `rustup` using current platform and creates `target/{debug,release}` directories.
-After switching target platform by `rustup` these directories created as `targer/{target-platform}/{debug,release}` directories.
+After that, check the path of the built library exists in `pom.xml` `maven-resources-plugin` section. By default, `rustup` uses the current platform and creates `target/{debug,release}` directories.
+After switching the target platform using `rustup`, these directories are created as `targer/{target-platform}/{debug,release}` directories.
 
-Example building library for `aarch64-unknown-linux-gnu` target: 
+Example of building the library for the `aarch64-unknown-linux-gnu` target: 
 ```shell
 cargo build --release --target aarch64-unknown-linux-gnu --manifest-path adblock-rs/Cargo.toml
 ```
 
-And you have to update `pom.xml` file:
+You alse need to update the `pom.xml` file:
 ```xml
 <plugin>
   <groupId>org.apache.maven.plugins</groupId>
